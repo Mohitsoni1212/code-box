@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CodeBox – All Codes</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.0/dist/tesseract.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+  <!-- ✅ Your custom CSS should come after Bootstrap -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- jQuery CDN (place before your custom script) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body,
+    html {
+      height: auto !important;
+      /* ensure body height adjusts */
+      overflow-x: hidden;
+      overflow-y: visible !important;
+      /* allow vertical scroll */
+    }
+
+    #mainCards,
+    #panelContent {
+      height: auto !important;
+      overflow: visible !important;
+    }
+
+    .slide-panel {
+      height: 100vh;
+      /* agar full height chahiye */
+      overflow-y: auto;
+      /* side panel scrollable rahe */
+    }
+
+    /* General card grid styles */
+    .card-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    /* Main page cards container */
+    #mainCards {
+      padding: 20px;
+    }
+
+    /* On mobile, main page cards: 2 cards per row */
+    @media (max-width: 767px) {
+      #mainCards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* On desktop, main page cards: 4 cards per row */
+    @media (min-width: 768px) {
+      #mainCards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Side panel styles */
+    .slide-panel {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      height: 100%;
+      background: #2f2f44;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+      transition: right 0.4s ease;
+      z-index: 1000;
+    }
+
+    /* Side panel open state */
+    .slide-panel.open {
+      right: 0;
+    }
+
+    /* Side panel width - half screen on desktop, full width on mobile */
+    @media (min-width: 992px) {
+      .slide-panel {
+        width: 50vw;
+        /* 50% viewport width */
+      }
+    }
+
+    @media (max-width: 991px) {
+      .slide-panel {
+        width: 100vw;
+        /* full width on tablet/mobile */
+      }
+    }
+
+    /* Cards inside side panel container */
+    #panelContent {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(2, 1fr);
+      /* Default 2 cards per row (mobile) */
+      overflow-y: auto;
+      max-height: 100%;
+      padding-bottom: 10px;
+    }
+
+    /* Desktop view: 4 cards per row */
+    @media (min-width: 992px) {
+      #panelContent {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Card styling */
+    .card {
+      background: #2d2d3a;
+      padding: 15px;
+      border-radius: 10px;
+      color: white;
+    }
+
+    body {
+      background-color: #1e1e2f;
+      /* VS Code dark background style */
+      color: #ffffff;
+    }
+
+    #searchBar {
+      background-image: url(assets/gradient-black-technology-background_23-2149209060.avif);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      height: 300px;
+      /* ✅ height increase ki */
+      padding: 0 16px;
+
+      position: relative;
+      z-index: 1;
+      margin-bottom: 40px;
+      /* ✅ add this */
+    }
+
+
+    /* ✅ Completely remove backdrop blur */
+    .modal-backdrop.show {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background-color: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    /* ✅ Optional: Better looking modal */
+    .modal-content {
+      background-color: #2c2f4a;
+      color: white;
+    }
+
+    .modal-backdrop.show {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background-color: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    .modal-content {
+      background-color: #1e1e2f;
+      color: #fff;
+      border: none;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
+
+    .filter-btn {
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .card {
+      background: #2d2d3a;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+    }
+
+    /* === Slide Panel === */
+    .slide-panel {
+      position: fixed;
+      top: 56px;
+      /* Adjust to navbar height, e.g. 56px for Bootstrap default */
+      right: -100%;
+      height: calc(100% - 56px);
+      /* full height minus navbar */
+      background: #2f2f44;
+      overflow-y: auto;
+      padding: 20px;
+      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+      transition: right 0.4s ease;
+      z-index: 1050;
+      /* Must be higher than navbar's z-index (usually 1030 or 1040) */
+    }
+
+    .slide-panel.open {
+      right: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #555;
+      margin-bottom: 10px;
+    }
+
+    .close-btn {
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Hide main content cards if needed */
+    #mainCards {
+      padding: 20px;
+    }
+
+    /* Improved filter buttons */
+    .filter-btn {
+      margin: 8px 6px;
+      padding: 6px 14px;
+      /* padding kam kari */
+      background: linear-gradient(45deg, #3498db, #2980b9);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      /* font-size kam kari */
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 3px 6px rgba(52, 152, 219, 0.5);
+      user-select: none;
+    }
+
+    .filter-btn:hover {
+      background: linear-gradient(45deg, #2980b9, #1c5980);
+      transform: scale(1.05);
+    }
+
+    .filter-btn.active {
+      background: #1abc9c;
+      box-shadow: 0 0 10px #1abc9c;
+    }
+
+    /* Container for filter buttons with horizontal scroll */
+    .filter-btn-container {
+      display: flex;
+      overflow-x: auto;
+      padding: 8px 12px;
+      gap: 8px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #2980b9 transparent;
+    }
+
+    /* Optional: style scrollbar for webkit browsers */
+    .filter-btn-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .filter-btn-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .filter-btn-container::-webkit-scrollbar-thumb {
+      background-color: #2980b9;
+      border-radius: 4px;
+    }
+
+    /* Cards container horizontal scroll on overflow */
+    #mainCards,
+    #panelContent {
+      display: grid;
+      grid-auto-flow: column;
+      /* horizontal flow */
+      grid-auto-columns: minmax(250px, 1fr);
+      /* card width */
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Hide vertical scrollbar, optional */
+    #mainCards::-webkit-scrollbar,
+    #panelContent::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    #mainCards::-webkit-scrollbar-track,
+    #panelContent::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #mainCards::-webkit-scrollbar-thumb,
+    #panelContent::-webkit-scrollbar-thumb {
+      background-color: #2980b9;
+      border-radius: 4px;
+    }
+
+    /* On desktop revert to grid with multiple rows */
+    @media (min-width: 768px) {
+
+      #mainCards,
+      #panelContent {
+        display: grid;
+        grid-auto-flow: initial;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        overflow-x: visible;
+      }
+    }
+  </style>
+
+
+</head>
+
+<body>
+
+  <div class="grad-bar"></div>
+
+  <nav class="navbar bg-body-tertiary fixed-top">
+    <div class="container-fluid">
+       <div class="col-md-8 col-sm-6 col-12">
+          <p class="copyright-text">
+            <a href="#"><span class="logo">CODE BOX</span></a>
+          </p>
+        </div>
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+        aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+          <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <img src="assets/logo.png" alt="Logo"
+              style="height: 2rem; width: 10rem; border-radius: 50%; object-fit: cover; margin-right: 8px;">
+
+          </a>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <li class="nav-item"><a class="nav-link active" href="#about">About</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#services">Services</a></li>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Dropdown
+              </a>
+
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="DSA.html">DSA</a></li>
+                <li><a class="dropdown-item" href="html5.html">HTML</a></li>
+                <li><a class="dropdown-item" href="#">CSS</a></li>
+                <li><a class="dropdown-item" href="#">C</a></li>
+
+                <li><a class="dropdown-item" href="js.html">Js</a></li>
+                <li><a class="dropdown-item" href="#">REACT.JS</a></li>
+              </ul>
+       
+
+          </ul>
+          </li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+  </nav>
+  <nav class="navbar navbar-expand-lg bg-dark text-center" style="margin-top: 5px; z-index: 1;">
+    <div class="container-fluid justify-content-center flex-wrap py-2">
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="all">All</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="cpp">C++</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="js">JavaScript</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="java">Java</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="cpp">C++</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="js">JavaScript</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="java">Java</button><button
+        class="filter-btn btn btn-outline-light m-2" data-filter="cpp">C++</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="js">JavaScript</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="java">Java</button><button
+        class="filter-btn btn btn-outline-light m-2" data-filter="cpp">C++</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="js">JavaScript</button>
+      <button class="filter-btn btn btn-outline-light m-2" data-filter="java">Java</button>
+
+
+    </div>
+  </nav>
+
+  <div id="searchBar">
+    <input id="searchInput" placeholder="Search keyword…">
+  </div>
+  <div class="card-grid"></div>
+
+  <div class="dsa-card"
+    style="max-width: 1300px; margin: 30px auto; padding: 25px; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 16px rgba(0,0,0,0.1); font-family: 'Segoe UI', sans-serif; line-height: 1.8; color: #333; height: 400px; overflow-y: auto;">
+
+    <h2 style="text-align: center; color: #2c3e50;">What is C++ ?</h2>
+    <p>
+      C++ is a general-purpose, high-performance programming language. It was developed by Bjarne Stroustrup at Bell
+      Labs starting in 1979. C++ is an extension of the C programming language, adding features such as classes,
+      objects, and exceptions.
+    </p>
+
+    <p><strong>Basics of C++ Programming</strong></p>
+    <p>Here are some basic components and concepts in C++ programming:</p>
+
+    <p><strong>Including Libraries</strong><br>
+      In C++, we use the #include directive to include libraries or header files into our program. For example, to
+      include the standard input/output library.
+    </p>
+
+    <p><strong>Main Function</strong><br>
+      The entry point of a C++ program is the main function. Every C++ program must have a main function:</p>
+    <pre>
+int main() {
+  // Your code goes here
+  return 0;
+}
+  </pre>
+
+    <p><strong>Input/Output</strong><br>
+      To perform input and output operations in C++, we can use the built-in objects std::cin for input and std::cout
+      for output, available in the iostream library. Here's an example of reading an integer and printing its value.
+    </p>
+
+    <p><strong>Variables and Data Types</strong><br>
+      C++ has several basic data types for representing integer, floating-point, and character values:
+    <ul>
+      <li>int: integer values</li>
+      <li>float: single-precision floating-point values</li>
+      <li>double: double-precision floating-point values</li>
+      <li>char: single characters</li>
+      <li>bool: boolean values</li>
+    </ul>
+    Variables must be declared with a data type before they can be used:
+    <pre>
+int x;
+float y;
+double z;
+char c;
+bool b;
+    </pre>
+    </p>
+
+    <p style="background-color: #f0f7ff; padding: 15px; border-left: 5px solid #3498db; border-radius: 8px;">
+      In simple terms, mastering C++ helps you become a better problem-solver and a more efficient programmer – it's the
+      backbone of strong programming skills.
+    </p>
+  </div>
+  <div style="text-align: center; margin-top: 30px;margin-bottom: 20px;">
+    <a href="assets/C++/cpp.pdf" download class="download-btn"
+      style="  text-decoration: none; background-color: #3498db; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 16px; transition: 0.3s;">
+      📄 Download C++ Roadmap (PDF)
+    </a>
+  </div>
+  </div>
+
+  </dev>
+  <p>🔰 1. Programming Fundamentals</p>
+
+  <!-- Main Card Area (can be hidden if needed) -->
+<!-- Side Panel -->
+<div id="slidePanel" class="slide-panel">
+  <div class="panel-header">
+    <h3 id="panelTitle">Filtered Cards</h3>
+    <button class="close-btn" onclick="closePanel()">✖</button>
+  </div>
+  <div id="panelContent"></div>
+</div>
+
+<!-- Cards (hidden master list to clone from) -->
+
+ <!--cpp operaters-->
+<div id="cardTemplates" style="display: none;">
+
+    <div class="card" data-cat="cpp">
+              <img src="assets/C++/operaters in c++.png" alt="for">
+              <p style="color: white;">✅Basic Operations in C++</p>
+
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                onclick="extractCodeAndShow(this)">Launch Code Modal</button>
+              <button class="btn btn-info mt-2" data-bs-toggle="modal" data-bs-target="#explanationModal" onclick="setModalContent(
+    `<h4>Variables & Data Types</h4><p>This explains data types like int, float, char, etc...</p>`,
+'assets/C++/Basic Operations in C++.pdf') ">
+                Show Explanation
+              </button>
+            </div>
+ <div class="card" data-cat="cpp">
+              <img src="assets\C++\Arithmetic Operators in C++.png" alt="for">
+              <p style="color: white;">✅Arithmetic Operators in C++</p>
+
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                onclick="extractCodeAndShow(this)">Launch Code Modal</button>
+              <button class="btn btn-info mt-2" data-bs-toggle="modal" data-bs-target="#explanationModal" onclick="setModalContent(
+    `<h4>Variables & Data Types</h4><p>This explains data types like int, float, char, etc...</p>`,
+'assets/C++/Arithmetic Operators in C++.pdf') ">
+                Show Explanation
+              </button>
+            </div>
+            <div class="card" data-keyword="First Program in C++" data-cat="cpp">
+              <img src="assets\C++\lpogical operations.png " alt="for">
+              <p style="color: white;">✅Logical Operators in C++</p>
+
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                onclick="extractCodeAndShow(this)">Launch Code Modal</button>
+              <button class="btn btn-info mt-2" data-bs-toggle="modal" data-bs-target="#explanationModal" onclick="setModalContent(
+    `<h4>Variables & Data Types</h4><p>This explains data types like int, float, char, etc...</p>`,
+'assets/C++/Logical Operators in C++.pdf') ">
+                Show Explanation
+              </button>
+            </div>
+  <!-- Extra detailed cards with images and buttons -->
+  <div class="card" data-cat="cpp" data-keyword="if else">
+    <img src="https://via.placeholder.com/150" alt="If Else Code" />
+    <p>✅ If Else Code</p>
+    <button class="btn btn-primary" onclick="alert('Launch Code Modal for If Else')">Launch Code Modal</button>
+    <button class="btn btn-info mt-2" onclick="alert('Show Explanation for If Else')">Show Explanation</button>
+  </div>
+
+  <div class="card" data-cat="js" data-keyword="for loop">
+    <img src="https://via.placeholder.com/150" alt="For Loop Code" />
+    <p>✅ For Loop Code</p>
+    <button class="btn btn-primary" onclick="alert('Launch Code Modal for For Loop')">Launch Code Modal</button>
+    <button class="btn btn-info mt-2" onclick="alert('Show Explanation for For Loop')">Show Explanation</button>
+  </div>
+
+  <div class="card" data-cat="java" data-keyword="switch">
+    <img src="https://via.placeholder.com/150" alt="Switch Statement Code" />
+    <p>✅ Switch Statement Code</p>
+    <button class="btn btn-primary" onclick="alert('Launch Code Modal for Switch')">Launch Code Modal</button>
+    <button class="btn btn-info mt-2" onclick="alert('Show Explanation for Switch')">Show Explanation</button>
+  </div>
+</div>
+
+<!-- Visible cards -->
+ 
+<div id="allCards" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 m-4">
+  <div class="col card" data-cat="cpp">
+    <div class="card-body bg-dark text-white">
+      <h5 class="card-title">C++ If-Else</h5>
+    </div>
+  </div>
+  <div class="col card" data-cat="cpp">
+    <div class="card-body bg-dark text-white">
+      <h5 class="card-title">C++ Switch</h5>
+    </div>
+  </div>
+  <div class="col card" data-cat="js">
+    <div class="card-body bg-dark text-white">
+      <h5 class="card-title">JS For Loop</h5>
+    </div>
+  </div>
+  <div class="col card" data-cat="java">
+    <div class="card-body bg-dark text-white">
+      <h5 class="card-title">Java Switch</h5>
+    </div>
+  </div>
+</div>
+
+
+          <p>🔰 2. Basic Operations in C++.</p>
+          <div class="card-grid">
+
+            <div class="card" data-keyword="First Program in C++">
+              <img src="assets/C++/operaters in c++.png" alt="for">
+              <p style="color: white;">✅Basic Operations in C++</p>
+
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                onclick="extractCodeAndShow(this)">Launch Code Modal</button>
+              <button class="btn btn-info mt-2" data-bs-toggle="modal" data-bs-target="#explanationModal" onclick="setModalContent(
+    `<h4>Variables & Data Types</h4><p>This explains data types like int, float, char, etc...</p>`,
+'assets/C++/Basic Operations in C++.pdf') ">
+                Show Explanation
+              </button>
+            </div>
+            <div class="card" data-keyword="First Program in C++">
+              <img src="assets\C++\Arithmetic Operators in C++.png" alt="for">
+              <p style="color: white;">✅Arithmetic Operators in C++</p>
+
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                onclick="extractCodeAndShow(this)">Launch Code Modal</button>
+              <button class="btn btn-info mt-2" data-bs-toggle="modal" data-bs-target="#explanationModal" onclick="setModalContent(
+    `<h4>Variables & Data Types</h4><p>This explains data types like int, float, char, etc...</p>`,
+'assets/C++/Arithmetic Operators in C++.pdf') ">
+                Show Explanation
+              </button>
+            </div>
+            
+            <div class="card" data-keyword="First Program in C++">
+              <img src="assets\C++\Bitwise Operations.png " alt="for">
+              <p style="color: white;">✅Bitwise Operations</p>
+
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                onclick="extractCodeAndShow(this)">Launch Code Modal</button>
+              <button class="btn btn-info mt-2" data-bs-toggle="modal" data-bs-target="#explanationModal" onclick="setModalContent(
+    `<h4>Variables & Data Types</h4><p>This explains data types like int, float, char, etc...</p>`,
+'assets/C++/Bitwise Operations.pdf') ">
+                Show Explanation
+              </button>
+            </div>
+
+          </div>
+          <!-- Modal for Code -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Extracted Code</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                  <pre id="modalCodeContent" style="padding:10px; border-radius:5px;">⏳ Waiting for extraction...</pre>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-success" onclick="copyModalCode()">📋 Copy</button>
+
+                </div>
+
+                <!-- Compiler Output Box -->
+                <div id="compilerOutput"
+                  style="display:none; background:black; color:lime; padding:10px; white-space:pre-wrap; font-family:monospace;">
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" id="explanationModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <h5 class="modal-title">Explanation</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalContent"></div>
+                <div class="modal-footer">
+                  <a id="downloadPdfBtn" href="#" class="btn btn-success" download style="display:none;">📥 Download
+                    Notes
+                    PDF</a>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+            <!-- Compiler-style Output Box -->
+
+
+
+            <!-- Image View Modal -->
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-dark text-white">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body text-center">
+                    <img id="modalImage" src="" class="img-fluid rounded" alt="Preview" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal for Explanation -->
+            <div class="modal fade" id="explanationModal" tabindex="-1" aria-labelledby="explanationModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="explanationModalLabel">Code Explanation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+
+                  <div class="modal-body" id="modalBodyContent">
+                    <!-- Explanation appears here -->
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <!--footer code yha ha -->
+            <footer class="site-footer">
+              <div class="container">
+                <div class="row">
+                  <div class="col-sm-12 col-md-6">
+                    <h6>About</h6>
+                    <p class="text-justify">CodeBox is your go-to hub for quick, ready-to-use code snippets and logic
+                      examples.
+                      Whether you're a student or a developer, we make it easy to find and use code in HTML, CSS,
+                      JavaScript, and
+                      more. Our goal is to simplify coding and help you build faster, smarter.</p>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <h6>Categories</h6>
+                    <ul class="footer-links ">
+                      <li><a href="#">c</a></li>
+                      <li><a href="#">c++</a></li>
+                      <li><a href="#">HTML</a></li>
+                      <li><a href="#">CSS</a></li>
+                      <li><a href="#">Java</a></li>
+                      <li><a href="#">React.js</a></li>
+                    </ul>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <h6>Quick Links</h6>
+                    <ul class="footer-links">
+                      <li><a href="#">About Us</a></li>
+                      <li><a href="#">Contact Us</a></li>
+                      <li><a href="#">Contribute</a></li>
+                      <li><a href="#">Privacy Policy</a></li>
+                      <li><a href="#">Sitemap</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <hr class="small">
+              </div>
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-8 col-sm-6 col-12">
+                    <p class="copyright-text">
+                      <a href="#"><span class="logo">CODE BOX</span></a>
+                    </p>
+                  </div>
+                  <div class="col-md-4 col-sm-6 col-12">
+                    <ul class="social-icons">
+                      <li><a class="facebook" href="#"><i class="fab fa-facebook-f"></i></a></li>
+                      <li><a class="twitter" href="#"><i class="fab fa-twitter"></i></a></li>
+                      <li><a class="dribbble" href="#"><i class="fab fa-dribbble"></i></a></li>
+                      <li><a class="linkedin" href="#"><i class="fab fa-linkedin-in"></i></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </footer>
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+              integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+              crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+              integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+              crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+              integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+              crossorigin="anonymous"></script>
+</body>
+<script src="js/ocr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const buttons = document.querySelectorAll('.filter-btn');
+  const panel = document.getElementById('slidePanel');
+  const content = document.getElementById('panelContent');
+  const title = document.getElementById('panelTitle');
+  const cardTemplates = document.querySelectorAll('#cardTemplates .card');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+      title.textContent = `${filter.toUpperCase()} Cards`;
+      content.innerHTML = '';
+
+      cardTemplates.forEach(card => {
+        if (card.dataset.cat === filter) {
+          content.appendChild(card.cloneNode(true));
+        }
+      });
+
+      panel.classList.add('open');
+    });
+  });
+
+  function closePanel() {
+    panel.classList.remove('open');
+  }
+</script>
+
+</body>
+
+</html>
