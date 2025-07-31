@@ -6,29 +6,28 @@
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
-
 <url>
   <loc>https://codebox404.netlify.app/</loc>
   <lastmod>2025-07-31T09:09:57+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://codebox404.netlify.app/dsa</loc>
+  <loc>https://codebox404.netlify.app/dsa.html</loc>
   <lastmod>2025-07-31T09:09:57+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://codebox404.netlify.app/html5</loc>
+  <loc>https://codebox404.netlify.app/html5.html</loc>
   <lastmod>2025-07-31T09:09:57+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://codebox404.netlify.app/c++</loc>
+  <loc>https://codebox404.netlify.app/c++.html</loc>
   <lastmod>2025-07-31T09:09:57+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://codebox404.netlify.app/js</loc>
+  <loc>https://codebox404.netlify.app/js.html</loc>
   <lastmod>2025-07-31T09:09:57+00:00</lastmod>
   <priority>0.80</priority>
 </url>
@@ -42,6 +41,5 @@
   <lastmod>2025-07-31T09:09:57+00:00</lastmod>
   <priority>0.64</priority>
 </url>
-
 
 </urlset>
