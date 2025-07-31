@@ -185,3 +185,55 @@ document.addEventListener('DOMContentLoaded', () => {
   const modal = bootstrap.Modal.getInstance(contactModalEl);
   modal.hide();
 });
+
+// Visitor counter functionality
+ type="module"
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDzxKFeCOI-IOh9uPK3qE6giWREsIWN4BE",
+    authDomain: "codebox044.firebaseapp.com",
+    databaseURL: "https://codebox044-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "codebox044",
+    storageBucket: "codebox044.appspot.com",
+    messagingSenderId: "478366290274",
+    appId: "1:478366290274:web:80edbd20480b1c8978dc3b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const countRef = ref(db, "visitorCount");
+
+  async function updateVisitorCount() {
+    try {
+      const snapshot = await get(countRef);
+      let count = snapshot.exists() ? snapshot.val() : 0;
+      count++;
+      await set(countRef, count);
+      update3DCounter(String(count).padStart(4, '0'));
+    } catch (error) {
+      console.error("Visitor count error:", error);
+    }
+  }
+
+  function update3DCounter(countStr) {
+    const container = document.getElementById("visitor-counter");
+    container.innerHTML = ""; // clear previous
+
+    for (let digit of countStr) {
+      const span = document.createElement("div");
+      span.className = "flip-digit-3d flipping";
+      span.textContent = digit;
+      container.appendChild(span);
+    }
+
+    // Remove flipping class after animation
+    setTimeout(() => {
+      const digits = document.querySelectorAll(".flip-digit-3d");
+      digits.forEach(d => d.classList.remove("flipping"));
+    }, 500);
+  }
+
+  // Call it
+  updateVisitorCount();
