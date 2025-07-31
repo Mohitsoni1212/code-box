@@ -339,7 +339,10 @@ body {
             <a href="index.html"><span class="logo">CODE BOX</span></a>
           </p>
         </div>
-    
+
+
+
+
     <!-- Toggler button for offcanvas -->
     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
       aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
@@ -545,13 +548,19 @@ body {
       </div>
       <hr class="small">
     </div>
+ 
+ 
     <div class="container">
+      
       <div class="row">
         <div class="col-md-8 col-sm-6 col-12">
           <p class="copyright-text">
             <a href="#"><span class="logo">CODE BOX</span></a>
           </p>
+
+
         </div>
+    
         <div class="col-md-4 col-sm-6 col-12">
           <ul class="social-icons">
             <li><a class="facebook" href="#"> <svg xmlns="http://www.w3.org/2000/svg"  width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
@@ -570,6 +579,12 @@ body {
         </div>
       </div>
     </div>
+         <div class="visitor-container-3d">
+    <div class="label">Visitors -</div>
+    <div class="flip-counter-3d" id="visitor-counter"></div>
+  </div>
+
+
   </footer>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -581,6 +596,57 @@ body {
     integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
 </body>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDzxKFeCOI-IOh9uPK3qE6giWREsIWN4BE",
+    authDomain: "codebox044.firebaseapp.com",
+    databaseURL: "https://codebox044-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "codebox044",
+    storageBucket: "codebox044.appspot.com",
+    messagingSenderId: "478366290274",
+    appId: "1:478366290274:web:80edbd20480b1c8978dc3b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const countRef = ref(db, "visitorCount");
+
+  async function updateVisitorCount() {
+    try {
+      const snapshot = await get(countRef);
+      let count = snapshot.exists() ? snapshot.val() : 0;
+      count++;
+      await set(countRef, count);
+      update3DCounter(String(count).padStart(4, '0'));
+    } catch (error) {
+      console.error("Visitor count error:", error);
+    }
+  }
+
+  function update3DCounter(countStr) {
+    const container = document.getElementById("visitor-counter");
+    container.innerHTML = ""; // clear previous
+
+    for (let digit of countStr) {
+      const span = document.createElement("div");
+      span.className = "flip-digit-3d flipping";
+      span.textContent = digit;
+      container.appendChild(span);
+    }
+
+    // Remove flipping class after animation
+    setTimeout(() => {
+      const digits = document.querySelectorAll(".flip-digit-3d");
+      digits.forEach(d => d.classList.remove("flipping"));
+    }, 500);
+  }
+
+  // Call it
+  updateVisitorCount();
+</script>
 
 <script>
 
